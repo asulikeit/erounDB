@@ -1,0 +1,13 @@
+[package]
+name = "jamsil-sql"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+sqlparser.workspace = true
+regex.workspace = true
+serde.workspace = true

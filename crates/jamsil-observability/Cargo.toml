@@ -1,0 +1,18 @@
+[package]
+name = "jamsil-observability"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+jamsil-ipc.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+bincode.workspace = true
+crc32fast.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true

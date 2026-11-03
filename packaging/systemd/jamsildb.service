@@ -1,0 +1,36 @@
+[Unit]
+Description=erounDB node supervisor (jamsild)
+Documentation=file:///usr/share/doc/eroundb/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=jamsildb
+Group=jamsildb
+ExecStart=/usr/bin/jamsild --config /etc/jamsildb/jamsildb.toml
+# 78 = 영구 실패 (Cluster ID/포맷 불일치, 데이터 손상 등) — 재시작해도 해결되지 않으므로 재시작하지 않는다.
+Restart=on-failure
+RestartPreventExitStatus=78
+RestartSec=3
+TimeoutStartSec=900
+TimeoutStopSec=60
+KillMode=mixed
+RuntimeDirectory=jamsildb
+RuntimeDirectoryMode=0750
+StateDirectory=jamsildb
+StateDirectoryMode=0700
+LogsDirectory=jamsildb
+LimitNOFILE=65536
+TasksMax=4096
+# MemoryMax=24G
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/jamsildb /var/log/jamsildb /run/jamsildb
+
+[Install]
+WantedBy=multi-user.target

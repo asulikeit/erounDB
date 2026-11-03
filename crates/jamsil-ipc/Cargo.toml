@@ -1,0 +1,17 @@
+[package]
+name = "jamsil-ipc"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_bytes.workspace = true
+bincode.workspace = true
+crc32fast.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true

@@ -1,0 +1,25 @@
+[package]
+name = "jamsil-consensus"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+jamsil-ipc.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_bytes.workspace = true
+bincode.workspace = true
+crc32fast.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+rand.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

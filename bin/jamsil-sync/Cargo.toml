@@ -1,0 +1,21 @@
+[package]
+name = "jamsil-sync-bin"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "jamsil-sync"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+jamsil-ipc.workspace = true
+jamsil-consensus.workspace = true
+jamsil-observability.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+bincode.workspace = true
+parking_lot.workspace = true

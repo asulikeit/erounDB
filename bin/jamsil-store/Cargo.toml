@@ -1,0 +1,19 @@
+[package]
+name = "jamsil-store-bin"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "jamsil-store"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+jamsil-common.workspace = true
+jamsil-ipc.workspace = true
+jamsil-storage.workspace = true
+jamsil-observability.workspace = true
+tokio.workspace = true
+tracing.workspace = true

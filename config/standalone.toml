@@ -1,0 +1,82 @@
+# erounDB Standalone (1노드) 설정 예시 — 설계서 12.1
+[server]
+name = "erounDB"
+node_id = 1
+mode = "standalone"
+run_dir = "/run/jamsildb"
+
+[network]
+listen_ipv4 = "0.0.0.0"
+listen_ipv6 = "::"
+port = 9786
+
+[network.access]
+default = "allow"             # IP 기준 전체 허용; 인증 면제 아님
+allow_cidrs = ["0.0.0.0/0", "::/0"]
+deny_cidrs = []
+
+[security]
+authentication = "scram-sha-256"
+tls_enabled = true
+tls_required = true
+cert_file = "/etc/jamsildb/tls/server.crt"   # 없으면 data_dir/tls에 자체 서명 인증서 생성
+key_file = "/etc/jamsildb/tls/server.key"
+
+# 비밀번호 해시: jamsild hash-password '<password>'
+[[security.users]]
+name = "jamsil"
+scram_secret = "SCRAM-SHA-256$4096:CHANGE_ME"
+# role = "superuser"          # superuser | readwrite | readonly (생략 시 superuser 플래그 기준, 기본 superuser)
+# 비관리자 계정 예:
+# [[security.users]]
+# name = "app"
+# scram_secret = "SCRAM-SHA-256$..."
+# role = "readwrite"
+# tables = ["orders", "items"]    # 생략 시 모든 사용자 테이블
+
+[database]
+name = "jamsil"
+encoding = "UTF8"
+read_consistency = "linearizable"
+
+[storage]
+engine = "sqlite"
+data_dir = "/var/lib/jamsildb"
+synchronous = "FULL"
+journal_mode = "WAL"
+encryption = "none"
+compression = "none"
+checksum = true
+
+[storage.limits]
+sqlite_max_length_mib = 64
+max_mutation_payload_mib = 64
+raft_transport_frame_mib = 1
+# 프로세스당 1MiB 초과 메시지 동시 메모리 예산 (최소 68)
+large_value_budget_mib = 512
+
+[text]
+max_size_mib = 32
+storage_mode = "inline"
+like_enabled = false
+
+[search]
+enabled = true
+# TEXT_MATCH 일치 문서가 이 수를 넘으면 불완전한 결과 대신 JDB-4104
+max_candidates = 100000
+engine = "tantivy"
+default_consistency = "eventual"
+
+[search.indexing]
+workers = 4
+max_memory_mib = 512
+commit_interval_ms = 1000
+
+[search.analyzer]
+english = "default"
+korean = "lindera-ko-dic"
+
+[logging]
+directory = "/var/log/jamsildb"
+level = "info"
+format = "json"

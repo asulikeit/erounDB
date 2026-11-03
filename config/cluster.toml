@@ -1,0 +1,100 @@
+# erounDB 3노드 클러스터 설정 예시 (Node1) — 설계서 12.1
+# 노드 2, 3은 node_id와 cluster_bind만 바꾼다. IP는 예시이며 실제 IP가 아니다.
+[server]
+name = "erounDB"
+node_id = 1
+mode = "cluster"
+run_dir = "/run/jamsildb"
+
+[network]
+listen_ipv4 = "0.0.0.0"
+listen_ipv6 = "::"
+port = 9786
+cluster_bind = "192.168.10.11:9787"
+
+[network.access]
+default = "allow"
+allow_cidrs = ["0.0.0.0/0", "::/0"]
+deny_cidrs = []
+
+[security]
+authentication = "scram-sha-256"
+tls_enabled = true
+tls_required = true
+cert_file = "/etc/jamsildb/tls/server.crt"
+key_file = "/etc/jamsildb/tls/server.key"
+# 노드 간 9787 상호 인증용 공유 비밀 (세 노드 동일하게). 운영에서는 반드시 설정.
+cluster_secret = "CHANGE_ME_long_random_secret"
+
+[[security.users]]
+name = "jamsil"
+scram_secret = "SCRAM-SHA-256$4096:CHANGE_ME"
+# role = "superuser"          # superuser | readwrite | readonly (생략 시 superuser 플래그 기준, 기본 superuser)
+# 비관리자 계정 예:
+# [[security.users]]
+# name = "app"
+# scram_secret = "SCRAM-SHA-256$..."
+# role = "readwrite"
+# tables = ["orders", "items"]    # 생략 시 모든 사용자 테이블
+
+[database]
+name = "jamsil"
+encoding = "UTF8"
+read_consistency = "linearizable"
+
+[storage]
+engine = "sqlite"
+data_dir = "/var/lib/jamsildb"
+synchronous = "FULL"
+journal_mode = "WAL"
+encryption = "none"
+compression = "none"
+checksum = true
+
+[text]
+max_size_mib = 32
+storage_mode = "inline"
+like_enabled = false
+
+[storage.limits]
+sqlite_max_length_mib = 64
+max_mutation_payload_mib = 64
+raft_transport_frame_mib = 1
+# 프로세스당 1MiB 초과 메시지 동시 메모리 예산 (최소 68)
+large_value_budget_mib = 512
+
+[cluster]
+cluster_id = "jamsildb-prod-01"
+mode = "raft"
+initial_voters = [1, 2, 3]
+
+[[cluster.peers]]
+node_id = 1
+address = "192.168.10.11:9787"
+[[cluster.peers]]
+node_id = 2
+address = "192.168.10.12:9787"
+[[cluster.peers]]
+node_id = 3
+address = "192.168.10.13:9787"
+
+[search]
+enabled = true
+# TEXT_MATCH 일치 문서가 이 수를 넘으면 불완전한 결과 대신 JDB-4104
+max_candidates = 100000
+engine = "tantivy"
+default_consistency = "eventual"
+
+[search.indexing]
+workers = 4
+max_memory_mib = 512
+commit_interval_ms = 1000
+
+[search.analyzer]
+english = "default"
+korean = "lindera-ko-dic"
+
+[logging]
+directory = "/var/log/jamsildb"
+level = "info"
+format = "json"

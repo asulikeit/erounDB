@@ -1,0 +1,8 @@
+/target
+/dev-data
+/dist
+/history/
+*.log
+*.rpm
+__pycache__/
+.venv/
